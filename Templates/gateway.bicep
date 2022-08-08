@@ -1,7 +1,8 @@
 param gatewayName string
 param subnetReference string
-param asn string
-param publicIP string
+param asn int
+param publicIpName string
+
 
 resource Gateway 'Microsoft.Network/virtualNetworkGateways@2022-01-01' = {
   name: gatewayName
@@ -13,7 +14,7 @@ resource Gateway 'Microsoft.Network/virtualNetworkGateways@2022-01-01' = {
         properties:{
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIP
+            id: publicIp.id
           }
           subnet: {
             id:subnetReference
@@ -31,5 +32,18 @@ resource Gateway 'Microsoft.Network/virtualNetworkGateways@2022-01-01' = {
       name: 'VpnGw1'
       tier: 'VpnGw1'
     }
+  }
+}
+
+resource publicIp 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
+  name: publicIpName
+  sku: {
+    name: 'Standard'
+    tier: 'Regional'
+  }
+  properties: {
+    publicIPAllocationMethod: 'Static'
+    publicIPAddressVersion: 'IPv4'
+    idleTimeoutInMinutes: 4
   }
 }

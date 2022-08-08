@@ -1,12 +1,13 @@
-param vnetname string
+param vnetName string
 param location string
 param addressPrefix string
-param defaultsubnetprefix string
-param SubnetPrefix1 string
-param GatewaySubnetPrefix string
+param defaultSubnetPrefix string
+param subnetPrefix1 string
+param azureFirewalSubbnetPrefix string
+param gatewaySubnetPrefix string
 
 resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' = {
-  name: vnetname
+  name: vnetName
   location: location
   extendedLocation: {
   }
@@ -22,21 +23,29 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' = {
       {
         name: 'DefaultSubnet'
         properties: {
-          addressPrefix: defaultsubnetprefix
+          addressPrefix: defaultSubnetPrefix
         }
       }
       {
         name: 'Subnet1'
         properties: {
-          addressPrefix: SubnetPrefix1
+          addressPrefix: subnetPrefix1
         }
       }
       {
         name: 'GatewaySubnet'
         properties: {
-          addressPrefix: GatewaySubnetPrefix
+          addressPrefix: gatewaySubnetPrefix
+        }
+      }
+      {
+        name: 'AzureFirewallSubnet'
+        properties: {
+          addressPrefix: azureFirewalSubbnetPrefix
         }
       }
     ]
   }
 }
+
+output gatewaySubnetID string = resourceId('Microsoft.Network/VirtualNetworks/subnets',vnetName,'GatewaySubnet')
