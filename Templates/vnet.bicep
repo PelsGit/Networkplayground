@@ -6,11 +6,9 @@ param subnetPrefix1 string
 param azureFirewalSubbnetPrefix string
 param gatewaySubnetPrefix string
 
-resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' = {
+resource vnet 'Microsoft.Network/virtualNetworks@2021-03-01' = {
   name: vnetName
   location: location
-  extendedLocation: {
-  }
   properties: {
     addressSpace: {
       addressPrefixes: [

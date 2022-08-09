@@ -1,7 +1,7 @@
-param location string = 'west europe'
+param location string
 
 module vnetOnPrem 'Templates/vnet.bicep' = {
-  name: '${deployment().name}-vnetDeploy'
+  name: '${deployment().name}-vnetDeployonprem'
   params: {
     addressPrefix: '10.1.0.0/16'
     location: location
@@ -16,9 +16,24 @@ module vnetOnPrem 'Templates/vnet.bicep' = {
 module gatewayOnPrem 'Templates/gateway.bicep'= {
   name: '${deployment().name}-gatewayDeploy'
   params: {
+    location: location
     asn: 65020
     gatewayName: 'gatewayOP'
     publicIpName: 'pipGWOP'
     subnetReference: vnetOnPrem.outputs.gatewaySubnetID
+  }
+}
+
+module localGateway 'Templates/localgateway.bicep' = {
+  name: '${deployment().name}-localGatewayDeploy'
+  params: {
+    location: location
+    asnNumber: 65020
+    bgpPeeringAddress: gatewayOnPrem.outputs.bgpPeeringAddress
+    gatewayIpAddress: gatewayOnPrem.outputs.publicIpAddress
+    localGatewayName: 'lgwHubToOnprem'
+    connectionName: 'connection1'
+    vpnGatewayId: gatewayOnPrem.outputs.gatewayId
+    sharedKey: 'psk'
   }
 }

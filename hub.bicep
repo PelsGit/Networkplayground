@@ -1,7 +1,7 @@
-param location string = 'west europe'
+param location string
 
-module vnetGwHub 'Templates/vnet.bicep'= {
-  name: '${deployment().name}-vnetDeploy'
+module vnetGwHub 'Templates/vnet.bicep' = {
+  name: '${deployment().name}-vnetDeployhub'
   params: {
     addressPrefix: '172.16.0.0/16'
     location: location
@@ -9,16 +9,31 @@ module vnetGwHub 'Templates/vnet.bicep'= {
     gatewaySubnetPrefix: '172.16.2.0/27'
     subnetPrefix1: '172.16.3.0/24'
     vnetName: 'vnetGwHub'
-    azureFirewalSubbnetPrefix:'172.16.2.128/27'
+    azureFirewalSubbnetPrefix: '172.16.2.128/27'
   }
 }
 
-module gatewayHub 'Templates/gateway.bicep'= {
+module gatewayHub 'Templates/gateway.bicep' = {
   name: '${deployment().name}-gatewayDeploy'
   params: {
-    asn: 65020
-    gatewayName: 'gatewayOP'
-    publicIpName: 'pipGWOP'
+    location: location
+    asn: 65015
+    gatewayName: 'gatewayHub'
+    publicIpName: 'pipGWHub'
     subnetReference: vnetGwHub.outputs.gatewaySubnetID
+  }
+}
+
+module localGateway 'Templates/localgateway.bicep' = {
+  name: '${deployment().name}-localGatewayDeploy'
+  params: {
+    location: location
+    asnNumber: 65020
+    bgpPeeringAddress: gatewayHub.outputs.bgpPeeringAddress
+    gatewayIpAddress: gatewayHub.outputs.publicIpAddress
+    localGatewayName: 'lgwHubToOnprem'
+    connectionName: 'connection1'
+    vpnGatewayId: gatewayHub.outputs.gatewayId
+    sharedKey: 'psk'
   }
 }
