@@ -1,5 +1,4 @@
 param location string
-
 module vnetGwHub 'Templates/vnet.bicep' = {
   name: '${deployment().name}-vnetDeployhub'
   params: {
@@ -24,16 +23,6 @@ module gatewayHub 'Templates/gateway.bicep' = {
   }
 }
 
-module localGateway 'Templates/localgateway.bicep' = {
-  name: '${deployment().name}-localGatewayDeploy'
-  params: {
-    location: location
-    asnNumber: 65020
-    bgpPeeringAddress: gatewayHub.outputs.bgpPeeringAddress
-    gatewayIpAddress: gatewayHub.outputs.publicIpAddress
-    localGatewayName: 'lgwHubToOnprem'
-    connectionName: 'connection1'
-    vpnGatewayId: gatewayHub.outputs.gatewayId
-    sharedKey: 'psk'
-  }
-}
+output bgpPeeringAddress string = gatewayHub.outputs.bgpPeeringAddress
+output publicIpAddress string = gatewayHub.outputs.publicIpAddress
+output gatewayId string = gatewayHub.outputs.gatewayId

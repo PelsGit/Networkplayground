@@ -24,16 +24,6 @@ module gatewayOnPrem 'Templates/gateway.bicep'= {
   }
 }
 
-module localGateway 'Templates/localgateway.bicep' = {
-  name: '${deployment().name}-localGatewayDeploy'
-  params: {
-    location: location
-    asnNumber: 65020
-    bgpPeeringAddress: gatewayOnPrem.outputs.bgpPeeringAddress
-    gatewayIpAddress: gatewayOnPrem.outputs.publicIpAddress
-    localGatewayName: 'lgwHubToOnprem'
-    connectionName: 'connection1'
-    vpnGatewayId: gatewayOnPrem.outputs.gatewayId
-    sharedKey: 'psk'
-  }
-}
+output bgpPeeringAddress string = gatewayOnPrem.outputs.bgpPeeringAddress
+output publicIpAddress string = gatewayOnPrem.outputs.publicIpAddress
+output gatewayId string = gatewayOnPrem.outputs.gatewayId

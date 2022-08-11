@@ -47,3 +47,4 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-03-01' = {
 }
 
 output gatewaySubnetID string = resourceId('Microsoft.Network/VirtualNetworks/subnets',vnetName,'GatewaySubnet')
+output subnetref string = resourceId('Microsoft.Network/VirtualNetworks/subnets',vnetName,'subnet1')
