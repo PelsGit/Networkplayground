@@ -14,6 +14,25 @@ module onPremDeployment 'onprem.bicep' = {
   }
 }
 
+module spokeDeployment 'spoke.bicep' = {
+  name: '${deployment().name}-spokeDeploy'
+  params: {
+    location: location
+  }
+}
+
+module vnetPeerings 'vnetpeerings.bicep' = {
+  name: '${deployment().name}-vnetPeeringsDeploy'
+  dependsOn: [
+    hubDeployment
+    spokeDeployment
+  ]
+  params: {
+    remoteVnetNameHub: 'vnetGwHub'
+    remoteVnetNameSpoke: 'spoke01'
+  }
+}
+
 module vpnConnections 'vpnconnections.bicep' = {
   name: '${deployment().name}-vpnConnectionsDeploy'
   params: {

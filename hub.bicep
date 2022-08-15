@@ -1,4 +1,5 @@
 param location string
+
 module vnetGwHub 'Templates/vnet.bicep' = {
   name: '${deployment().name}-vnetDeployhub'
   params: {
