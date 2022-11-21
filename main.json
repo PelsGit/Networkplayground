@@ -1,0 +1,1280 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.12.40.16777",
+      "templateHash": "13494743491123299281"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "west europe"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}-hubDeploy', deployment().name)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.12.40.16777",
+              "templateHash": "17373142804355154475"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "[format('{0}-vnetDeployhub', deployment().name)]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "addressPrefix": {
+                    "value": "172.16.0.0/16"
+                  },
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "defaultSubnetPrefix": {
+                    "value": "172.16.1.0/24"
+                  },
+                  "gatewaySubnetPrefix": {
+                    "value": "172.16.2.0/27"
+                  },
+                  "subnetPrefix1": {
+                    "value": "172.16.3.0/24"
+                  },
+                  "vnetName": {
+                    "value": "vnetGwHub"
+                  },
+                  "azureFirewalSubbnetPrefix": {
+                    "value": "172.16.2.128/27"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.12.40.16777",
+                      "templateHash": "10273337330228113806"
+                    }
+                  },
+                  "parameters": {
+                    "vnetName": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "addressPrefix": {
+                      "type": "string"
+                    },
+                    "defaultSubnetPrefix": {
+                      "type": "string"
+                    },
+                    "subnetPrefix1": {
+                      "type": "string"
+                    },
+                    "azureFirewalSubbnetPrefix": {
+                      "type": "string"
+                    },
+                    "gatewaySubnetPrefix": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Network/virtualNetworks",
+                      "apiVersion": "2021-03-01",
+                      "name": "[parameters('vnetName')]",
+                      "location": "[parameters('location')]",
+                      "properties": {
+                        "addressSpace": {
+                          "addressPrefixes": [
+                            "[parameters('addressPrefix')]"
+                          ]
+                        },
+                        "enableDdosProtection": false,
+                        "enableVmProtection": false,
+                        "subnets": [
+                          {
+                            "name": "DefaultSubnet",
+                            "properties": {
+                              "addressPrefix": "[parameters('defaultSubnetPrefix')]"
+                            }
+                          },
+                          {
+                            "name": "Subnet1",
+                            "properties": {
+                              "addressPrefix": "[parameters('subnetPrefix1')]"
+                            }
+                          },
+                          {
+                            "name": "GatewaySubnet",
+                            "properties": {
+                              "addressPrefix": "[parameters('gatewaySubnetPrefix')]"
+                            }
+                          },
+                          {
+                            "name": "AzureFirewallSubnet",
+                            "properties": {
+                              "addressPrefix": "[parameters('azureFirewalSubbnetPrefix')]"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "gatewaySubnetID": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Network/VirtualNetworks/subnets', parameters('vnetName'), 'GatewaySubnet')]"
+                    },
+                    "subnetref": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Network/VirtualNetworks/subnets', parameters('vnetName'), 'subnet1')]"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "[format('{0}-gatewayDeploy', deployment().name)]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "asn": {
+                    "value": 65015
+                  },
+                  "gatewayName": {
+                    "value": "gatewayHub"
+                  },
+                  "publicIpName": {
+                    "value": "pipGWHub"
+                  },
+                  "subnetReference": {
+                    "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-vnetDeployhub', deployment().name)), '2020-10-01').outputs.gatewaySubnetID.value]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.12.40.16777",
+                      "templateHash": "4852697651111668347"
+                    }
+                  },
+                  "parameters": {
+                    "gatewayName": {
+                      "type": "string"
+                    },
+                    "subnetReference": {
+                      "type": "string"
+                    },
+                    "asn": {
+                      "type": "int"
+                    },
+                    "publicIpName": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Network/virtualNetworkGateways",
+                      "apiVersion": "2022-01-01",
+                      "name": "[parameters('gatewayName')]",
+                      "location": "[parameters('location')]",
+                      "properties": {
+                        "gatewayType": "Vpn",
+                        "ipConfigurations": [
+                          {
+                            "name": "default",
+                            "properties": {
+                              "privateIPAllocationMethod": "Dynamic",
+                              "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
+                              },
+                              "subnet": {
+                                "id": "[parameters('subnetReference')]"
+                              }
+                            }
+                          }
+                        ],
+                        "enableBgp": true,
+                        "bgpSettings": {
+                          "asn": "[parameters('asn')]"
+                        },
+                        "vpnType": "RouteBased",
+                        "vpnGatewayGeneration": "Generation1",
+                        "sku": {
+                          "name": "VpnGw1",
+                          "tier": "VpnGw1"
+                        }
+                      },
+                      "dependsOn": [
+                        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
+                      ]
+                    },
+                    {
+                      "type": "Microsoft.Network/publicIPAddresses",
+                      "apiVersion": "2021-03-01",
+                      "name": "[parameters('publicIpName')]",
+                      "location": "[parameters('location')]",
+                      "sku": {
+                        "name": "Standard",
+                        "tier": "Regional"
+                      },
+                      "properties": {
+                        "publicIPAllocationMethod": "Static",
+                        "publicIPAddressVersion": "IPv4",
+                        "idleTimeoutInMinutes": 4
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "bgpPeeringAddress": {
+                      "type": "string",
+                      "value": "[reference(resourceId('Microsoft.Network/virtualNetworkGateways', parameters('gatewayName')), '2022-01-01').bgpSettings.bgpPeeringAddress]"
+                    },
+                    "publicIpAddress": {
+                      "type": "string",
+                      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName')), '2021-03-01').ipAddress]"
+                    },
+                    "gatewayId": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('gatewayName'))]"
+                    }
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', format('{0}-vnetDeployhub', deployment().name))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "bgpPeeringAddress": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-gatewayDeploy', deployment().name)), '2020-10-01').outputs.bgpPeeringAddress.value]"
+            },
+            "publicIpAddress": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-gatewayDeploy', deployment().name)), '2020-10-01').outputs.publicIpAddress.value]"
+            },
+            "gatewayId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-gatewayDeploy', deployment().name)), '2020-10-01').outputs.gatewayId.value]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}-onPremDeploy', deployment().name)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.12.40.16777",
+              "templateHash": "17230056275399332892"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "[format('{0}-vnetDeployonprem', deployment().name)]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "addressPrefix": {
+                    "value": "10.1.0.0/16"
+                  },
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "defaultSubnetPrefix": {
+                    "value": "10.1.1.0/24"
+                  },
+                  "gatewaySubnetPrefix": {
+                    "value": "10.1.2.0/27"
+                  },
+                  "subnetPrefix1": {
+                    "value": "10.1.3.0/24"
+                  },
+                  "vnetName": {
+                    "value": "vnetonprem"
+                  },
+                  "azureFirewalSubbnetPrefix": {
+                    "value": "10.1.2.128/27"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.12.40.16777",
+                      "templateHash": "10273337330228113806"
+                    }
+                  },
+                  "parameters": {
+                    "vnetName": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "addressPrefix": {
+                      "type": "string"
+                    },
+                    "defaultSubnetPrefix": {
+                      "type": "string"
+                    },
+                    "subnetPrefix1": {
+                      "type": "string"
+                    },
+                    "azureFirewalSubbnetPrefix": {
+                      "type": "string"
+                    },
+                    "gatewaySubnetPrefix": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Network/virtualNetworks",
+                      "apiVersion": "2021-03-01",
+                      "name": "[parameters('vnetName')]",
+                      "location": "[parameters('location')]",
+                      "properties": {
+                        "addressSpace": {
+                          "addressPrefixes": [
+                            "[parameters('addressPrefix')]"
+                          ]
+                        },
+                        "enableDdosProtection": false,
+                        "enableVmProtection": false,
+                        "subnets": [
+                          {
+                            "name": "DefaultSubnet",
+                            "properties": {
+                              "addressPrefix": "[parameters('defaultSubnetPrefix')]"
+                            }
+                          },
+                          {
+                            "name": "Subnet1",
+                            "properties": {
+                              "addressPrefix": "[parameters('subnetPrefix1')]"
+                            }
+                          },
+                          {
+                            "name": "GatewaySubnet",
+                            "properties": {
+                              "addressPrefix": "[parameters('gatewaySubnetPrefix')]"
+                            }
+                          },
+                          {
+                            "name": "AzureFirewallSubnet",
+                            "properties": {
+                              "addressPrefix": "[parameters('azureFirewalSubbnetPrefix')]"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "gatewaySubnetID": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Network/VirtualNetworks/subnets', parameters('vnetName'), 'GatewaySubnet')]"
+                    },
+                    "subnetref": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Network/VirtualNetworks/subnets', parameters('vnetName'), 'subnet1')]"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "[format('{0}-gatewayDeploy', deployment().name)]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "asn": {
+                    "value": 65020
+                  },
+                  "gatewayName": {
+                    "value": "gatewayOP"
+                  },
+                  "publicIpName": {
+                    "value": "pipGWOP"
+                  },
+                  "subnetReference": {
+                    "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-vnetDeployonprem', deployment().name)), '2020-10-01').outputs.gatewaySubnetID.value]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.12.40.16777",
+                      "templateHash": "4852697651111668347"
+                    }
+                  },
+                  "parameters": {
+                    "gatewayName": {
+                      "type": "string"
+                    },
+                    "subnetReference": {
+                      "type": "string"
+                    },
+                    "asn": {
+                      "type": "int"
+                    },
+                    "publicIpName": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Network/virtualNetworkGateways",
+                      "apiVersion": "2022-01-01",
+                      "name": "[parameters('gatewayName')]",
+                      "location": "[parameters('location')]",
+                      "properties": {
+                        "gatewayType": "Vpn",
+                        "ipConfigurations": [
+                          {
+                            "name": "default",
+                            "properties": {
+                              "privateIPAllocationMethod": "Dynamic",
+                              "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
+                              },
+                              "subnet": {
+                                "id": "[parameters('subnetReference')]"
+                              }
+                            }
+                          }
+                        ],
+                        "enableBgp": true,
+                        "bgpSettings": {
+                          "asn": "[parameters('asn')]"
+                        },
+                        "vpnType": "RouteBased",
+                        "vpnGatewayGeneration": "Generation1",
+                        "sku": {
+                          "name": "VpnGw1",
+                          "tier": "VpnGw1"
+                        }
+                      },
+                      "dependsOn": [
+                        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
+                      ]
+                    },
+                    {
+                      "type": "Microsoft.Network/publicIPAddresses",
+                      "apiVersion": "2021-03-01",
+                      "name": "[parameters('publicIpName')]",
+                      "location": "[parameters('location')]",
+                      "sku": {
+                        "name": "Standard",
+                        "tier": "Regional"
+                      },
+                      "properties": {
+                        "publicIPAllocationMethod": "Static",
+                        "publicIPAddressVersion": "IPv4",
+                        "idleTimeoutInMinutes": 4
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "bgpPeeringAddress": {
+                      "type": "string",
+                      "value": "[reference(resourceId('Microsoft.Network/virtualNetworkGateways', parameters('gatewayName')), '2022-01-01').bgpSettings.bgpPeeringAddress]"
+                    },
+                    "publicIpAddress": {
+                      "type": "string",
+                      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName')), '2021-03-01').ipAddress]"
+                    },
+                    "gatewayId": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('gatewayName'))]"
+                    }
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', format('{0}-vnetDeployonprem', deployment().name))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "bgpPeeringAddress": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-gatewayDeploy', deployment().name)), '2020-10-01').outputs.bgpPeeringAddress.value]"
+            },
+            "publicIpAddress": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-gatewayDeploy', deployment().name)), '2020-10-01').outputs.publicIpAddress.value]"
+            },
+            "gatewayId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-gatewayDeploy', deployment().name)), '2020-10-01').outputs.gatewayId.value]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}-spokeDeploy', deployment().name)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.12.40.16777",
+              "templateHash": "15478360168715344832"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "[format('{0}-spokeDeploy', deployment().name)]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "addressPrefix": {
+                    "value": "192.168.0.0/16"
+                  },
+                  "azureFirewalSubbnetPrefix": {
+                    "value": "192.168.1.0/26"
+                  },
+                  "defaultSubnetPrefix": {
+                    "value": "192.168.2.0/24"
+                  },
+                  "gatewaySubnetPrefix": {
+                    "value": "192.168.3.0/26"
+                  },
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "subnetPrefix1": {
+                    "value": "192.168.4.0/24"
+                  },
+                  "vnetName": {
+                    "value": "spoke01"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.12.40.16777",
+                      "templateHash": "10273337330228113806"
+                    }
+                  },
+                  "parameters": {
+                    "vnetName": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "addressPrefix": {
+                      "type": "string"
+                    },
+                    "defaultSubnetPrefix": {
+                      "type": "string"
+                    },
+                    "subnetPrefix1": {
+                      "type": "string"
+                    },
+                    "azureFirewalSubbnetPrefix": {
+                      "type": "string"
+                    },
+                    "gatewaySubnetPrefix": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Network/virtualNetworks",
+                      "apiVersion": "2021-03-01",
+                      "name": "[parameters('vnetName')]",
+                      "location": "[parameters('location')]",
+                      "properties": {
+                        "addressSpace": {
+                          "addressPrefixes": [
+                            "[parameters('addressPrefix')]"
+                          ]
+                        },
+                        "enableDdosProtection": false,
+                        "enableVmProtection": false,
+                        "subnets": [
+                          {
+                            "name": "DefaultSubnet",
+                            "properties": {
+                              "addressPrefix": "[parameters('defaultSubnetPrefix')]"
+                            }
+                          },
+                          {
+                            "name": "Subnet1",
+                            "properties": {
+                              "addressPrefix": "[parameters('subnetPrefix1')]"
+                            }
+                          },
+                          {
+                            "name": "GatewaySubnet",
+                            "properties": {
+                              "addressPrefix": "[parameters('gatewaySubnetPrefix')]"
+                            }
+                          },
+                          {
+                            "name": "AzureFirewallSubnet",
+                            "properties": {
+                              "addressPrefix": "[parameters('azureFirewalSubbnetPrefix')]"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "gatewaySubnetID": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Network/VirtualNetworks/subnets', parameters('vnetName'), 'GatewaySubnet')]"
+                    },
+                    "subnetref": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Network/VirtualNetworks/subnets', parameters('vnetName'), 'subnet1')]"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}-vnetPeeringsDeploy', deployment().name)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "remoteVnetNameHub": {
+            "value": "vnetGwHub"
+          },
+          "remoteVnetNameSpoke": {
+            "value": "spoke01"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.12.40.16777",
+              "templateHash": "16762053697608515303"
+            }
+          },
+          "parameters": {
+            "remoteVnetNameSpoke": {
+              "type": "string"
+            },
+            "remoteVnetNameHub": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "[format('{0}-peeringDeploytoSpoke', deployment().name)]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "deployVnetPeering": {
+                    "value": true
+                  },
+                  "remoteVnet": {
+                    "value": "[resourceId('Microsoft.Network/VirtualNetworks', parameters('remoteVnetNameSpoke'))]"
+                  },
+                  "useRemoteGateways": {
+                    "value": false
+                  },
+                  "vnetPeeringName": {
+                    "value": "vnetGwHub/peeringToSpoke"
+                  },
+                  "allowGatewayTransit": {
+                    "value": true
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.12.40.16777",
+                      "templateHash": "13419266320943568068"
+                    }
+                  },
+                  "parameters": {
+                    "remoteVnet": {
+                      "type": "string"
+                    },
+                    "vnetPeeringName": {
+                      "type": "string"
+                    },
+                    "useRemoteGateways": {
+                      "type": "bool"
+                    },
+                    "deployVnetPeering": {
+                      "type": "bool"
+                    },
+                    "allowGatewayTransit": {
+                      "type": "bool"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "condition": "[parameters('deployVnetPeering')]",
+                      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                      "apiVersion": "2022-01-01",
+                      "name": "[parameters('vnetPeeringName')]",
+                      "properties": {
+                        "remoteVirtualNetwork": {
+                          "id": "[parameters('remoteVnet')]"
+                        },
+                        "useRemoteGateways": "[parameters('useRemoteGateways')]",
+                        "allowForwardedTraffic": true,
+                        "allowGatewayTransit": "[parameters('allowGatewayTransit')]",
+                        "allowVirtualNetworkAccess": true
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "[format('{0}-peeringDeployToHub', deployment().name)]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "deployVnetPeering": {
+                    "value": true
+                  },
+                  "remoteVnet": {
+                    "value": "[resourceId('Microsoft.Network/VirtualNetworks', parameters('remoteVnetNameHub'))]"
+                  },
+                  "useRemoteGateways": {
+                    "value": true
+                  },
+                  "vnetPeeringName": {
+                    "value": "spoke01/peeringToHub"
+                  },
+                  "allowGatewayTransit": {
+                    "value": true
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.12.40.16777",
+                      "templateHash": "13419266320943568068"
+                    }
+                  },
+                  "parameters": {
+                    "remoteVnet": {
+                      "type": "string"
+                    },
+                    "vnetPeeringName": {
+                      "type": "string"
+                    },
+                    "useRemoteGateways": {
+                      "type": "bool"
+                    },
+                    "deployVnetPeering": {
+                      "type": "bool"
+                    },
+                    "allowGatewayTransit": {
+                      "type": "bool"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "condition": "[parameters('deployVnetPeering')]",
+                      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+                      "apiVersion": "2022-01-01",
+                      "name": "[parameters('vnetPeeringName')]",
+                      "properties": {
+                        "remoteVirtualNetwork": {
+                          "id": "[parameters('remoteVnet')]"
+                        },
+                        "useRemoteGateways": "[parameters('useRemoteGateways')]",
+                        "allowForwardedTraffic": true,
+                        "allowGatewayTransit": "[parameters('allowGatewayTransit')]",
+                        "allowVirtualNetworkAccess": true
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-hubDeploy', deployment().name))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-spokeDeploy', deployment().name))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[format('{0}-vpnConnectionsDeploy', deployment().name)]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "hubBgpAsn": {
+            "value": 65015
+          },
+          "hubBgpPeeringAddress": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-hubDeploy', deployment().name)), '2020-10-01').outputs.bgpPeeringAddress.value]"
+          },
+          "hubGatewayID": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-onPremDeploy', deployment().name)), '2020-10-01').outputs.gatewayId.value]"
+          },
+          "hubGatewayPublicIP": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-onPremDeploy', deployment().name)), '2020-10-01').outputs.publicIpAddress.value]"
+          },
+          "hubLocalGatewayName": {
+            "value": "hubLocalGateway"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "onPremBgpAsn": {
+            "value": 65020
+          },
+          "onPremBgpPeeringAddress": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-onPremDeploy', deployment().name)), '2020-10-01').outputs.bgpPeeringAddress.value]"
+          },
+          "onPremGatewayId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-hubDeploy', deployment().name)), '2020-10-01').outputs.gatewayId.value]"
+          },
+          "onPremGatewayPublicIP": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-hubDeploy', deployment().name)), '2020-10-01').outputs.publicIpAddress.value]"
+          },
+          "onPremLocalGatewayName": {
+            "value": "onPremLocalGateway"
+          },
+          "sharedKey": {
+            "value": "psk"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.12.40.16777",
+              "templateHash": "10497002635335860995"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "sharedKey": {
+              "type": "secureString"
+            },
+            "onPremGatewayId": {
+              "type": "string"
+            },
+            "onPremBgpAsn": {
+              "type": "int"
+            },
+            "onPremBgpPeeringAddress": {
+              "type": "string"
+            },
+            "hubGatewayPublicIP": {
+              "type": "string"
+            },
+            "hubLocalGatewayName": {
+              "type": "string"
+            },
+            "hubGatewayID": {
+              "type": "string"
+            },
+            "hubBgpAsn": {
+              "type": "int"
+            },
+            "hubBgpPeeringAddress": {
+              "type": "string"
+            },
+            "onPremGatewayPublicIP": {
+              "type": "string"
+            },
+            "onPremLocalGatewayName": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "[format('{0}-connectionToOnPrem', deployment().name)]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "asnNumber": {
+                    "value": "[parameters('onPremBgpAsn')]"
+                  },
+                  "bgpPeeringAddress": {
+                    "value": "[parameters('onPremBgpPeeringAddress')]"
+                  },
+                  "connectionName": {
+                    "value": "connectionToOnprem"
+                  },
+                  "gatewayIpAddress": {
+                    "value": "[parameters('hubGatewayPublicIP')]"
+                  },
+                  "localGatewayName": {
+                    "value": "[parameters('hubLocalGatewayName')]"
+                  },
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "sharedKey": {
+                    "value": "[parameters('sharedKey')]"
+                  },
+                  "vpnGatewayId": {
+                    "value": "[parameters('onPremGatewayId')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.12.40.16777",
+                      "templateHash": "5215425689539075214"
+                    }
+                  },
+                  "parameters": {
+                    "localGatewayName": {
+                      "type": "string"
+                    },
+                    "asnNumber": {
+                      "type": "int"
+                    },
+                    "bgpPeeringAddress": {
+                      "type": "string"
+                    },
+                    "gatewayIpAddress": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "connectionName": {
+                      "type": "string"
+                    },
+                    "vpnGatewayId": {
+                      "type": "string"
+                    },
+                    "sharedKey": {
+                      "type": "secureString"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Network/localNetworkGateways",
+                      "apiVersion": "2022-01-01",
+                      "name": "[parameters('localGatewayName')]",
+                      "location": "[parameters('location')]",
+                      "properties": {
+                        "bgpSettings": {
+                          "asn": "[parameters('asnNumber')]",
+                          "bgpPeeringAddress": "[parameters('bgpPeeringAddress')]"
+                        },
+                        "gatewayIpAddress": "[parameters('gatewayIpAddress')]"
+                      }
+                    },
+                    {
+                      "type": "Microsoft.Network/connections",
+                      "apiVersion": "2020-07-01",
+                      "name": "[parameters('connectionName')]",
+                      "location": "[parameters('location')]",
+                      "properties": {
+                        "connectionType": "IPsec",
+                        "enableBgp": true,
+                        "sharedKey": "[parameters('sharedKey')]",
+                        "virtualNetworkGateway1": {
+                          "id": "[parameters('vpnGatewayId')]",
+                          "properties": {}
+                        },
+                        "localNetworkGateway2": {
+                          "id": "[resourceId('Microsoft.Network/localNetworkGateways', parameters('localGatewayName'))]",
+                          "properties": {}
+                        }
+                      },
+                      "dependsOn": [
+                        "[resourceId('Microsoft.Network/localNetworkGateways', parameters('localGatewayName'))]"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "[format('{0}-connectionToHub', deployment().name)]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "asnNumber": {
+                    "value": "[parameters('hubBgpAsn')]"
+                  },
+                  "bgpPeeringAddress": {
+                    "value": "[parameters('hubBgpPeeringAddress')]"
+                  },
+                  "connectionName": {
+                    "value": "connectionToHub"
+                  },
+                  "gatewayIpAddress": {
+                    "value": "[parameters('onPremGatewayPublicIP')]"
+                  },
+                  "localGatewayName": {
+                    "value": "[parameters('onPremLocalGatewayName')]"
+                  },
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "sharedKey": {
+                    "value": "[parameters('sharedKey')]"
+                  },
+                  "vpnGatewayId": {
+                    "value": "[parameters('hubGatewayID')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.12.40.16777",
+                      "templateHash": "5215425689539075214"
+                    }
+                  },
+                  "parameters": {
+                    "localGatewayName": {
+                      "type": "string"
+                    },
+                    "asnNumber": {
+                      "type": "int"
+                    },
+                    "bgpPeeringAddress": {
+                      "type": "string"
+                    },
+                    "gatewayIpAddress": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "connectionName": {
+                      "type": "string"
+                    },
+                    "vpnGatewayId": {
+                      "type": "string"
+                    },
+                    "sharedKey": {
+                      "type": "secureString"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Network/localNetworkGateways",
+                      "apiVersion": "2022-01-01",
+                      "name": "[parameters('localGatewayName')]",
+                      "location": "[parameters('location')]",
+                      "properties": {
+                        "bgpSettings": {
+                          "asn": "[parameters('asnNumber')]",
+                          "bgpPeeringAddress": "[parameters('bgpPeeringAddress')]"
+                        },
+                        "gatewayIpAddress": "[parameters('gatewayIpAddress')]"
+                      }
+                    },
+                    {
+                      "type": "Microsoft.Network/connections",
+                      "apiVersion": "2020-07-01",
+                      "name": "[parameters('connectionName')]",
+                      "location": "[parameters('location')]",
+                      "properties": {
+                        "connectionType": "IPsec",
+                        "enableBgp": true,
+                        "sharedKey": "[parameters('sharedKey')]",
+                        "virtualNetworkGateway1": {
+                          "id": "[parameters('vpnGatewayId')]",
+                          "properties": {}
+                        },
+                        "localNetworkGateway2": {
+                          "id": "[resourceId('Microsoft.Network/localNetworkGateways', parameters('localGatewayName'))]",
+                          "properties": {}
+                        }
+                      },
+                      "dependsOn": [
+                        "[resourceId('Microsoft.Network/localNetworkGateways', parameters('localGatewayName'))]"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-hubDeploy', deployment().name))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-onPremDeploy', deployment().name))]"
+      ]
+    }
+  ]
+}
