@@ -24,6 +24,18 @@ module gatewayHub 'Templates/gateway.bicep' = {
   }
 }
 
+module hubvm 'Templates/virtualmachine.bicep' = {
+  name: '${deployment().name}-hubVmDeploy'
+  params: {
+    adminPassword: '$ecretPa$$w0rd'
+    adminUsername: 'admin01'
+    location: location
+    subnetId: vnetGwHub.outputs.subnetref
+    vmName: 'hubVm01'
+  }
+}
+
 output bgpPeeringAddress string = gatewayHub.outputs.bgpPeeringAddress
 output publicIpAddress string = gatewayHub.outputs.publicIpAddress
 output gatewayId string = gatewayHub.outputs.gatewayId
+output subnetReference string = vnetGwHub.outputs.subnetref

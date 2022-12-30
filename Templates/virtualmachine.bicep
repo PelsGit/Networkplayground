@@ -2,14 +2,14 @@
 param adminUsername string
 @secure()
 param adminPassword string
-param nicName string
 param location string
 param subnetId string
 param vmName string
 
+var NicName = '${vmName}-nic'
 
 resource nic 'Microsoft.Network/networkInterfaces@2020-06-01' = {
-  name: nicName
+  name: NicName
   location: location
   properties: {
     ipConfigurations: [
@@ -26,7 +26,7 @@ resource nic 'Microsoft.Network/networkInterfaces@2020-06-01' = {
   }
 }
 
-resource vmeu 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource vm 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: vmName
   location: location
   properties: {

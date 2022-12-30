@@ -13,6 +13,17 @@ module vnetOnPrem 'Templates/vnet.bicep' = {
   }
 }
 
+module onpremvm 'Templates/virtualmachine.bicep' = {
+  name: '${deployment().name}-hubVmDeploy'
+  params: {
+    adminPassword: '$ecretPa$$w0rd'
+    adminUsername: 'admin01'
+    location: location
+    subnetId: vnetOnPrem.outputs.subnetref
+    vmName: 'onPremVm01'
+  }
+}
+
 module gatewayOnPrem 'Templates/gateway.bicep'= {
   name: '${deployment().name}-gatewayDeploy'
   params: {

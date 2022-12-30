@@ -12,3 +12,14 @@ module spokeVnet 'Templates/vnet.bicep' = {
     vnetName: 'spoke01'
   }
 }
+
+module spokevm 'Templates/virtualmachine.bicep' = {
+  name: '${deployment().name}-hubVmDeploy'
+  params: {
+    adminPassword: '$ecretPa$$w0rd'
+    adminUsername: 'admin01'
+    location: location
+    subnetId: spokeVnet.outputs.subnetref
+    vmName: 'spokeVm01'
+  }
+}
