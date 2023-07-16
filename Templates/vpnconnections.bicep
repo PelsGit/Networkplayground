@@ -16,7 +16,7 @@ param hubBgpPeeringAddress string
 param onPremGatewayPublicIP string 
 param onPremLocalGatewayName string 
 
-module connectionToOnPrem 'Templates/localgateway.bicep' = {
+module connectionToOnPrem 'localgateway.bicep' = {
   name: '${deployment().name}-connectionToOnPrem'
   params: {
     asnNumber: onPremBgpAsn
@@ -30,7 +30,7 @@ module connectionToOnPrem 'Templates/localgateway.bicep' = {
   }
 }
 
-module connectionToHub 'Templates/localgateway.bicep' = {
+module connectionToHub 'localgateway.bicep' = {
   name: '${deployment().name}-connectionToHub'
   params: {
     asnNumber: hubBgpAsn

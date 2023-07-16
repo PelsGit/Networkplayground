@@ -21,7 +21,7 @@ module spokeDeployment 'spoke.bicep' = {
   }
 }
 
-module vnetPeerings 'vnetpeerings.bicep' = {
+module vnetPeerings 'templates/vnetpeerings.bicep' = {
   name: '${deployment().name}-vnetPeeringsDeploy'
   dependsOn: [
     hubDeployment
@@ -33,7 +33,7 @@ module vnetPeerings 'vnetpeerings.bicep' = {
   }
 }
 
-module vpnConnections 'vpnconnections.bicep' = {
+module vpnConnections 'templates/vpnconnections.bicep' = {
   name: '${deployment().name}-vpnConnectionsDeploy'
   params: {
     hubBgpAsn: 65015

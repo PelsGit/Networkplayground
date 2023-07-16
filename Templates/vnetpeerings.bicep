@@ -2,7 +2,7 @@
 param remoteVnetNameSpoke string
 param remoteVnetNameHub string
 
-module vnetPeeringtoSpoke 'Templates/vnetpeering.bicep' = {
+module vnetPeeringtoSpoke 'vnetpeering.bicep' = {
   name: '${deployment().name}-peeringDeploytoSpoke'
   params: {
     deployVnetPeering: true
@@ -13,7 +13,7 @@ module vnetPeeringtoSpoke 'Templates/vnetpeering.bicep' = {
   }
 }
 
-module vnetPeeringToHub 'Templates/vnetpeering.bicep' = {
+module vnetPeeringToHub 'vnetpeering.bicep' = {
   name: '${deployment().name}-peeringDeployToHub'
   params: {
     deployVnetPeering: true
