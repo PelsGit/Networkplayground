@@ -20,3 +20,20 @@ resource vwanhub 'Microsoft.Network/virtualHubs@2022-07-01' = {
 }
 
 output vwanHubName string = vwanhub.name
+
+resource vwanHubRoutingIntent 'Microsoft.Network/virtualHubs/routingIntent@2023-04-01' = {
+  name: 'string'
+  parent: vwanhub
+  properties: {
+    routingPolicies: [
+      {
+        destinations: [
+          'Internet'
+          'PrivateTraffic'
+        ]
+        name: 'string'
+        nextHop: 'string'
+      }
+    ]
+  }
+}

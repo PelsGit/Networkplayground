@@ -1,0 +1,25 @@
+{
+    "name": "hubRoutingIntent",
+    "id": "/subscriptions/6def8cbe-7f14-4da2-bd1c-bff0fd42f881/resourceGroups/vwanrg/providers/Microsoft.Network/virtualHubs/northeurope/routingIntent/hubRoutingIntent",
+    "etag": "W/\"908577ca-4ad6-462a-bfe0-a85fd7a0f129\"",
+    "properties": {
+      "provisioningState": "Succeeded",
+      "routingPolicies": [
+        {
+          "name": "Internet",
+          "destinations": [
+            "Internet"
+          ],
+          "nextHop": "/subscriptions/6def8cbe-7f14-4da2-bd1c-bff0fd42f881/resourceGroups/vwanrg/providers/Microsoft.Network/azureFirewalls/AzureFirewall_northeurope"
+        },
+        {
+          "name": "PrivateTraffic",
+          "destinations": [
+            "PrivateTraffic"
+          ],
+          "nextHop": "/subscriptions/6def8cbe-7f14-4da2-bd1c-bff0fd42f881/resourceGroups/vwanrg/providers/Microsoft.Network/azureFirewalls/AzureFirewall_northeurope"
+        }
+      ]
+    },
+    "type": "Microsoft.Network/virtualHubs/routingIntent"
+  }
